@@ -1,0 +1,33 @@
+name: Release i18n
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Trigger on version tags
+
+jobs:
+  update-react-app:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Get version
+        id: get_version
+        run: echo "VERSION=$(cat VERSION)" >> $GITHUB_ENV
+
+      - name: Checkout React Application
+        uses: actions/checkout@v2
+        with:
+          repository: chiraagrajput04/frontend
+          path: frontend
+
+      - name: Update i18n version in React App
+        run: |
+          cd frontend
+          echo "${{ env.VERSION }}" > i18n-version.txt  # Update to the version used
+          git config --global user.name "chiraagrajput04"
+          git config --global user.email "chiraagrajput04@gmail.com"
+          git add i18n-version.txt
+          git commit -m "Update i18n version to ${{ env.VERSION }}"
+          git push origin main  # Change branch as needed
